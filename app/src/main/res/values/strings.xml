@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Star Wars app</string>
+    <string-array name="searchMain">
+        <item>films</item>
+        <item>people</item>
+        <item>planets</item>
+        <item>species</item>
+        <item>starships</item>
+        <item>vehicles</item>
+    </string-array>
+</resources>
