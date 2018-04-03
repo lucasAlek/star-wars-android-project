@@ -1,6 +1,7 @@
 package ca.lucas.starwarsapp;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -68,39 +69,46 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onResponse(JSONObject response) {
                         //mTextView.setText("Response: " + response.toString());
-                        try {
-                            if(response.has("name"))
-                            {
-                                mTextView.setText("name: " + response.getString("name").toString());
-                            }
-                            else if(response.has("results")) {
-                                try {
-                                    filmItems = new ArrayList<filmItem>(25);
-                                    JSONArray jsArr = response.getJSONArray("results");
-                                    if (jsArr.length() > 0) {
-                                        for (int i = 0; i < jsArr.length(); i++) {
+                        if(response.has("name"))
+                        {
+                            //mTextView.setText("name: " + response.getString("name").toString());
+                        }
+                        else if(response.has("results")) {
+                            try {
+                                filmItems = new ArrayList<filmItem>(25);
+                                JSONArray jsArr = response.getJSONArray("results");
+                                if (jsArr.length() > 0) {
+                                    for (int i = 0; i < jsArr.length(); i++) {
 
-                                            String title = jsArr.getJSONObject(i).getString("title");
-                                            String episode = jsArr.getJSONObject(i).getString("episode_id");
-                                            String crawl = jsArr.getJSONObject(i).getString("opening_crawl");
-                                            String director = jsArr.getJSONObject(i).getString("director");
-                                            String producer = jsArr.getJSONObject(i).getString("producer");
-                                            String releaseDate = jsArr.getJSONObject((i)).getString("release_date");
-                                            String url = jsArr.getJSONObject(i).getString("url") + "?format=json";
-                                            filmItem item = new filmItem(title,episode, crawl,director,releaseDate,producer,url);
-                                            filmItems.add(item);
-                                            filmApadapter apadapter = new filmApadapter(MainActivity.this, android.R.layout.simple_list_item_1,filmItems);
-                                            lvFeed.setAdapter(apadapter);
-                                        }
+                                        String title = jsArr.getJSONObject(i).getString("title");
+                                        String episode = jsArr.getJSONObject(i).getString("episode_id");
+                                        String crawl = jsArr.getJSONObject(i).getString("opening_crawl");
+                                        String director = jsArr.getJSONObject(i).getString("director");
+                                        String producer = jsArr.getJSONObject(i).getString("producer");
+                                        String releaseDate = jsArr.getJSONObject((i)).getString("release_date");
+                                        String url = jsArr.getJSONObject(i).getString("url") + "?format=json";
+                                        final filmItem item = new filmItem(title, episode, crawl, director, releaseDate, producer, url);
+                                        filmItems.add(item);
+                                        filmApadapter apadapter = new filmApadapter(MainActivity.this, android.R.layout.simple_list_item_1, filmItems);
+                                        lvFeed.setAdapter(apadapter);
+
+                                        lvFeed.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                            @Override
+                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                Intent intent = new Intent(MainActivity.this, descriptionActivity.class);
+                                                intent.putExtra("url",filmItems.get(i).getUrl());
+                                                intent.putExtra("layout","film");
+                                                startActivity(intent);
+                                            }
+                                        });
+
 //                                mTextView.setText("title: " + response.getString("title").toString() +
 //                                        "\n\n opening crawl:" + response.getString("opening_crawl").toString());
                                     }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
                         }
                     }
                 },new Response.ErrorListener() {
