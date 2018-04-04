@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.jar.Attributes;
 
+import ca.lucas.starwarsapp.listItems.peopleItem;
 import ca.lucas.starwarsapp.singleton.MySingleton;
 import ca.lucas.starwarsapp.listItems.filmItem;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ListView lvFeed;
     ArrayAdapter<CharSequence> searchAdapter;
     private ArrayList<filmItem > filmItems;
+    private ArrayList<peopleItem> peopleItems;
 
 
     @Override
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 url += "films";
                 break;
             case 1:
-                url += "people/1";
+                url += "people";
                 break;
             case 2:
                 url += "planets/1";
@@ -196,4 +198,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             return v;
         }
     }
+
+    private class peopleAdaptor extends ArrayAdapter<peopleItem>{
+        private ArrayList<peopleItem> items;
+
+        public filmApadapter(Context context, int textViewResourceId, ArrayList<filmItem>)
+    }
+
 }
