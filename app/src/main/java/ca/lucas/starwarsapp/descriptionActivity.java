@@ -23,6 +23,7 @@ import ca.lucas.starwarsapp.singleton.MySingleton;
 
 public class descriptionActivity extends AppCompatActivity {
  public TextView tvTitle;
+ public TextView tvEpisode;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,11 +37,8 @@ public class descriptionActivity extends AppCompatActivity {
             setContentView(R.layout.film_layout);
         }
 
-
-        //tvview = findViewById(R.id.tvText);
-
-        //tvview.setText(url);
         tvTitle = findViewById(R.id.tvName);
+        tvEpisode = findViewById(R.id.tvEpisode);
 
         vollyJsonRequest(url);
     }
@@ -59,6 +57,7 @@ public class descriptionActivity extends AppCompatActivity {
                         else if(response.has("title")){
                             try {
                                 tvTitle.setText(response.getString("title").toString());
+                                tvEpisode.setText("Episode : " + response.getString("episode_id" ));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
