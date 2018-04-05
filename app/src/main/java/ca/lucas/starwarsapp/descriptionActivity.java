@@ -26,6 +26,8 @@ public class descriptionActivity extends AppCompatActivity {
  public TextView tvTitle;
  public TextView tvEpisode;
  public TextView tvCrowl;
+ public TextView tvDirector;
+ public TextView tvProducer;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -46,10 +48,14 @@ public class descriptionActivity extends AppCompatActivity {
         tvTitle = findViewById(R.id.tvName);
         tvEpisode = findViewById(R.id.tvEpisode);
         tvCrowl = findViewById(R.id.tvCrawl);
+        tvDirector = findViewById(R.id.tvDirector);
+        tvProducer = findViewById(R.id.tvProducer);
 
         tvTitle.setTextColor(Color.YELLOW);
         tvCrowl.setTextColor(Color.YELLOW);
         tvEpisode.setTextColor(Color.YELLOW);
+        tvDirector.setTextColor(Color.YELLOW);
+        tvProducer.setTextColor(Color.YELLOW);
 
         vollyJsonRequest(url);
     }
@@ -66,8 +72,9 @@ public class descriptionActivity extends AppCompatActivity {
                             try {
                                 tvTitle.setText( response.getString("name").toString());
                                 if(response.has("height")){
-                                    tvEpisode.setText("height : " + response.getString("height" ));
-                                    tvCrowl.setText("mass: " + response.getString("mass") + " kg");
+                                    tvEpisode.setText("Height : " + response.getString("height") + " cm");
+                                    tvCrowl.setText("Mass: " + response.getString("mass") + " kg");
+                                    tvDirector.setText("Hair Color: " + response.getString("hair_color"));
                                 }
 
                             } catch (JSONException e) {
@@ -80,33 +87,12 @@ public class descriptionActivity extends AppCompatActivity {
                                 tvTitle.setText(response.getString("title").toString());
                                 tvEpisode.setText("Episode : " + response.getString("episode_id" ));
                                 tvCrowl.setText("Opening Crowl:\n" + response.getString("opening_crawl"));
+                                tvDirector.setText("Director: " + response.getString("director"));
+                                tvProducer.setText("Producer: " + response.getString("producer"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-//                        else if(response.has("results")) {
-//                            try {
-//                                JSONArray jsArr = response.getJSONArray("results");
-//                                if (jsArr.length() > 0) {
-//                                    for (int i = 0; i < jsArr.length(); i++) {
-//
-//                                        String title = jsArr.getJSONObject(i).getString("title");
-//                                        String episode = jsArr.getJSONObject(i).getString("episode_id");
-//                                        String crawl = jsArr.getJSONObject(i).getString("opening_crawl");
-//                                        String director = jsArr.getJSONObject(i).getString("director");
-//                                        String producer = jsArr.getJSONObject(i).getString("producer");
-//                                        String releaseDate = jsArr.getJSONObject((i)).getString("release_date");
-//                                        final String url = jsArr.getJSONObject(i).getString("url") + "?format=json";
-//                                        final filmItem item = new filmItem(title, episode, crawl, director, releaseDate, producer, url);
-//
-////                                mTextView.setText("title: " + response.getString("title").toString() +
-////                                        "\n\n opening crawl:" + response.getString("opening_crawl").toString());
-//                                    }
-//                                }
-//                            } catch (JSONException e) {
-//                                e.printStackTrace();
-//                            }
-//                        }
                     }
                 },new Response.ErrorListener() {
 
