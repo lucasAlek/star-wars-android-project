@@ -1,6 +1,7 @@
 package ca.lucas.starwarsapp;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -24,6 +25,7 @@ import ca.lucas.starwarsapp.singleton.MySingleton;
 public class descriptionActivity extends AppCompatActivity {
  public TextView tvTitle;
  public TextView tvEpisode;
+ public TextView tvCrowl;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,9 +38,18 @@ public class descriptionActivity extends AppCompatActivity {
         if(layout.equals("film")){
             setContentView(R.layout.film_layout);
         }
+        else {
+            setContentView(R.layout.film_layout);
+        }
+
 
         tvTitle = findViewById(R.id.tvName);
         tvEpisode = findViewById(R.id.tvEpisode);
+        tvCrowl = findViewById(R.id.tvCrawl);
+
+        tvTitle.setTextColor(Color.YELLOW);
+        tvCrowl.setTextColor(Color.YELLOW);
+        tvEpisode.setTextColor(Color.YELLOW);
 
         vollyJsonRequest(url);
     }
@@ -52,12 +63,23 @@ public class descriptionActivity extends AppCompatActivity {
                         //mTextView.setText("Response: " + response.toString());
                         if(response.has("name"))
                         {
-                            //mTextView.setText("name: " + response.getString("name").toString());
+                            try {
+                                tvTitle.setText( response.getString("name").toString());
+                                if(response.has("height")){
+                                    tvEpisode.setText("height : " + response.getString("height" ));
+                                    tvCrowl.setText("mass: " + response.getString("mass") + " kg");
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+
                         }
                         else if(response.has("title")){
                             try {
                                 tvTitle.setText(response.getString("title").toString());
                                 tvEpisode.setText("Episode : " + response.getString("episode_id" ));
+                                tvCrowl.setText("Opening Crowl:\n" + response.getString("opening_crawl"));
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }

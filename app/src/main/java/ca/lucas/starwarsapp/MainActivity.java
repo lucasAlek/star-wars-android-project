@@ -3,6 +3,7 @@ package ca.lucas.starwarsapp;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTabHost;
@@ -141,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                             });
                                         }
                                         else if(jsArr.getJSONObject(i).has("name")) {
-                                            if (jsArr.getJSONObject(i).has("height")) {
                                                 String name = jsArr.getJSONObject(i).getString("name");
                                                 String url = jsArr.getJSONObject(i).getString("url") + "?format=json";
 
@@ -155,11 +155,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                                                     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                                                         Intent intent = new Intent(MainActivity.this, descriptionActivity.class);
                                                         intent.putExtra("url", peopleItems.get(i).getUrl());
-                                                        intent.putExtra("layout", "film");
+                                                        intent.putExtra("layout", "other");
                                                         startActivity(intent);
                                                     }
                                                 });
-                                            }
                                         }
 
                                     }
@@ -250,8 +249,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 TextView bt = v.findViewById(R.id.bottemtext);
 
                 if (tt != null) {
+                    tt.setTextColor(Color.YELLOW);
                     tt.setText(o.getTitle());
 
+                    bt.setTextColor(Color.YELLOW);
                     bt.setText(o.getDirector());
                 }
             }
@@ -262,8 +263,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private class peopleAdaptor extends ArrayAdapter<peopleItem>{
         private ArrayList<peopleItem> items;
 
-        public peopleAdaptor(@NonNull Context context, int resource, @NonNull List<peopleItem> objects) {
-            super(context, resource, objects);
+        public peopleAdaptor(@NonNull Context context, int resource, @NonNull ArrayList<peopleItem> items) {
+            super(context, resource, items);
+            this.items = items;
         }
 
         @NonNull
@@ -279,6 +281,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 TextView tt = v.findViewById(R.id.toptext);
 
                 if (tt != null) {
+                    tt.setTextColor(Color.YELLOW);
                     tt.setText(o.getName());
                 }
             }
