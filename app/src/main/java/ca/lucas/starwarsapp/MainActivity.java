@@ -2,6 +2,9 @@ package ca.lucas.starwarsapp;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTabHost;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -28,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.jar.Attributes;
 
 import ca.lucas.starwarsapp.listItems.peopleItem;
@@ -36,6 +40,7 @@ import ca.lucas.starwarsapp.listItems.filmItem;
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
 
+    private SharedPreferences sharedPreferences;
     Button btnGo;
     Spinner spnSearch;
     private ListView lvFeed;
@@ -60,52 +65,103 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         spnSearch.setAdapter(searchAdapter);
         spnSearch.setOnItemSelectedListener(this);
 
+        sharedPreferences = getSharedPreferences("searchURL",0);
+
+        String url;
+        url = sharedPreferences.getString("searchURL", "https://swapi.co/api/films/?format=json");
+
+
+        vollyJsonRequest(url);
+
         //final String url = "https://swapi.co/api/people/1/?format=json";
+
+        btnGo.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+                startActivity(getIntent());
+
+            }
+        });
 
     }
 
-    private void vollyJsonRequest(final TextView mTextView, String url) {
+    private void vollyJsonRequest(String url) {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest
                 (Request.Method.GET, url, null, new Response.Listener<JSONObject>() {
 
                     @Override
                     public void onResponse(JSONObject response) {
                         //mTextView.setText("Response: " + response.toString());
-                        if(response.has("name"))
-                        {
-                            //mTextView.setText("name: " + response.getString("name").toString());
+                        if(response.has("name")) {
+                            if (response.has("height")) {
+                                peopleItems = new ArrayList<peopleItem>(50);
+                                JSONArray jsArr = null;
+                                try {
+                                    jsArr = response.getJSONArray("results");
+
+                                    if (jsArr.length() > 0) {
+                                        for (int i = 0; i < jsArr.length(); i++) {
+
+                                        }
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                            }
                         }
                         else if(response.has("results")) {
                             try {
                                 filmItems = new ArrayList<filmItem>(25);
+                                peopleItems = new ArrayList<peopleItem>(50);
                                 JSONArray jsArr = response.getJSONArray("results");
                                 if (jsArr.length() > 0) {
                                     for (int i = 0; i < jsArr.length(); i++) {
+                                        if(jsArr.getJSONObject(i).has("title")) {
+                                            String title = jsArr.getJSONObject(i).getString("title");
+                                            String episode = jsArr.getJSONObject(i).getString("episode_id");
+                                            String crawl = jsArr.getJSONObject(i).getString("opening_crawl");
+                                            String director = jsArr.getJSONObject(i).getString("director");
+                                            String producer = jsArr.getJSONObject(i).getString("producer");
+                                            String releaseDate = jsArr.getJSONObject((i)).getString("release_date");
+                                            String url = jsArr.getJSONObject(i).getString("url") + "?format=json";
+                                            final filmItem item = new filmItem(title, episode, crawl, director, releaseDate, producer, url);
+                                            filmItems.add(item);
+                                            filmApadapter apadapter = new filmApadapter(MainActivity.this, android.R.layout.simple_list_item_1, filmItems);
+                                            lvFeed.setAdapter(apadapter);
 
-                                        String title = jsArr.getJSONObject(i).getString("title");
-                                        String episode = jsArr.getJSONObject(i).getString("episode_id");
-                                        String crawl = jsArr.getJSONObject(i).getString("opening_crawl");
-                                        String director = jsArr.getJSONObject(i).getString("director");
-                                        String producer = jsArr.getJSONObject(i).getString("producer");
-                                        String releaseDate = jsArr.getJSONObject((i)).getString("release_date");
-                                        String url = jsArr.getJSONObject(i).getString("url") + "?format=json";
-                                        final filmItem item = new filmItem(title, episode, crawl, director, releaseDate, producer, url);
-                                        filmItems.add(item);
-                                        filmApadapter apadapter = new filmApadapter(MainActivity.this, android.R.layout.simple_list_item_1, filmItems);
-                                        lvFeed.setAdapter(apadapter);
+                                            lvFeed.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                @Override
+                                                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                    Intent intent = new Intent(MainActivity.this, descriptionActivity.class);
+                                                    intent.putExtra("url", filmItems.get(i).getUrl());
+                                                    intent.putExtra("layout", "film");
+                                                    startActivity(intent);
+                                                }
+                                            });
+                                        }
+                                        else if(jsArr.getJSONObject(i).has("name")) {
+                                            if (jsArr.getJSONObject(i).has("height")) {
+                                                String name = jsArr.getJSONObject(i).getString("name");
+                                                String url = jsArr.getJSONObject(i).getString("url") + "?format=json";
 
-                                        lvFeed.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                                            @Override
-                                            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                                                Intent intent = new Intent(MainActivity.this, descriptionActivity.class);
-                                                intent.putExtra("url",filmItems.get(i).getUrl());
-                                                intent.putExtra("layout","film");
-                                                startActivity(intent);
+                                                final peopleItem item = new peopleItem(name, url);
+                                                peopleItems.add(item);
+                                                peopleAdaptor adaptor = new peopleAdaptor(MainActivity.this, android.R.layout.simple_list_item_1, peopleItems);
+                                                lvFeed.setAdapter(adaptor);
+
+                                                lvFeed.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                                                    @Override
+                                                    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                                                        Intent intent = new Intent(MainActivity.this, descriptionActivity.class);
+                                                        intent.putExtra("url", peopleItems.get(i).getUrl());
+                                                        intent.putExtra("layout", "film");
+                                                        startActivity(intent);
+                                                    }
+                                                });
                                             }
-                                        });
+                                        }
 
-//                                mTextView.setText("title: " + response.getString("title").toString() +
-//                                        "\n\n opening crawl:" + response.getString("opening_crawl").toString());
                                     }
                                 }
                             } catch (JSONException e) {
@@ -135,7 +191,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-       final TextView mTextView = findViewById(R.id.text);
+        spnSearch.setSelection(position,false);
+       //final TextView mTextView = findViewById(R.id.text);
         String url = "https://swapi.co/api/";
         switch (position){
             case 0:
@@ -145,23 +202,26 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 url += "people";
                 break;
             case 2:
-                url += "planets/1";
+                url += "planets";
                 break;
             case 3:
-                url += "species/11";
+                url += "species";
                 break;
             case 4:
-                url += "starships/9";
+                url += "starships";
                 break;
             case 5:
-                url += "vehicles/14";
+                url += "vehicles";
                 break;
             default:
                 url += "films/1";
         }
         url += "/?format=json";
-        vollyJsonRequest(mTextView , url);
+        SharedPreferences.Editor searchUrl = sharedPreferences.edit();
+        searchUrl.putString("searchURL",url);
+        searchUrl.commit();
     }
+
 
     @Override
     public void onNothingSelected(AdapterView<?> parent) {
@@ -202,7 +262,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private class peopleAdaptor extends ArrayAdapter<peopleItem>{
         private ArrayList<peopleItem> items;
 
-        public filmApadapter(Context context, int textViewResourceId, ArrayList<filmItem>)
+        public peopleAdaptor(@NonNull Context context, int resource, @NonNull List<peopleItem> objects) {
+            super(context, resource, objects);
+        }
+
+        @NonNull
+        @Override
+        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+            View v = convertView;
+            if (v == null) {
+                LayoutInflater vi = (LayoutInflater)getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+                v = vi.inflate(R.layout.single_list_item, null);
+            }
+            peopleItem o = items.get(position);
+            if (o != null) {
+                TextView tt = v.findViewById(R.id.toptext);
+
+                if (tt != null) {
+                    tt.setText(o.getName());
+                }
+            }
+            return v;
+        }
+    }
+
+    private void refreshPage() {
+        finish();
+        startActivity(getIntent());
     }
 
 }
