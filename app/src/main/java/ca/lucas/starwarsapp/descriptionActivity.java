@@ -41,7 +41,7 @@ public class descriptionActivity extends AppCompatActivity {
     private TextView tvDirector;
     private TextView tvProducer;
     private TextView tvRelease;
- private ArrayList<singleItem> singleItems;
+    private ArrayList<singleItem> singleItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,6 +94,33 @@ public class descriptionActivity extends AppCompatActivity {
                                     tvProducer.setText("Gender: " + response.getString("gender"));
                                     tvRelease.setText("home " + response.getString("homeworld") + "/?format=json");
                                 }
+                                else if(response.has("rotation_period")){
+                                    tvEpisode.setText("climate : " + response.getString("climate"));
+                                    tvCrowl.setText("gravity :" + response.getString("gravity"));
+                                    tvDirector.setText("terrain: " + response.getString("terrain"));
+                                    tvProducer.setText("water rating: " + response.getString("surface_water"));
+                                    tvRelease.setText("population: " + response.getString("population"));
+                                }
+                                else if(response.has("model")){
+                                    tvEpisode.setText("model: " + response.getString("model"));
+                                    tvCrowl.setText("manufacturer: " + response.getString("manufacturer"));
+                                    tvDirector.setText("cost: " + response.getString("cost_in_credits"));
+                                    tvProducer.setText("max speed: " + response.getString("max_atmosphering_speed"));
+
+                                    if(response.has("starship_class")){
+                                        tvRelease.setText("starship class " + response.getString("starship_class"));
+                                    }else{
+                                        tvRelease.setText("vehicle class " + response.getString("vehicle_class"));
+                                    };
+                                }
+                                else if(response.has("classification")){
+                                    tvEpisode.setText("classification : " + response.getString("classification"));
+                                    tvCrowl.setText("designation :" + response.getString("designation"));
+                                    tvDirector.setText("skin_colors: " + response.getString("skin_colors"));
+                                    tvProducer.setText("homeworld: " + response.getString("homeworld"));
+                                    tvRelease.setText("language: " + response.getString("language"));
+                                }
+
                                 if (response.has("films")) {
                                     JSONArray jsArr = null;
                                     singleItems = new ArrayList<singleItem>(10);
@@ -104,7 +131,6 @@ public class descriptionActivity extends AppCompatActivity {
                                             final singleItem item = new singleItem("name");
                                             itemApadapter apadapter = new itemApadapter(descriptionActivity.this,android.R.layout.simple_list_item_1,singleItems);
                                             lvFilmFeed.setAdapter(apadapter);
-
                                         }
                                     }
                                 }

@@ -18,6 +18,7 @@ import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.TextView;
@@ -44,10 +45,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private SharedPreferences sharedPreferences;
     Button btnGo;
     Spinner spnSearch;
+    EditText etSearch;
+
     private ListView lvFeed;
     ArrayAdapter<CharSequence> searchAdapter;
     private ArrayList<filmItem > filmItems;
     private ArrayList<peopleItem> peopleItems;
+
+    Button btnSearch;
 
 
     @Override
@@ -55,8 +60,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        btnSearch = findViewById(R.id.btnSearch);
         btnGo = findViewById(R.id.btnGO);
-
+        etSearch = findViewById(R.id.etSearch);
         spnSearch = findViewById(R.id.spnSearch);
         lvFeed = findViewById(R.id.lvFeed);
 
@@ -68,11 +74,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         sharedPreferences = getSharedPreferences("searchURL",0);
 
-        String url;
-        url = sharedPreferences.getString("searchURL", "https://swapi.co/api/films/?format=json");
+        final String[] url = new String[1];
+        url[0] = sharedPreferences.getString("searchURL", "https://swapi.co/api/films/?format=json");
 
 
-        vollyJsonRequest(url);
+        vollyJsonRequest(url[0]);
 
         //final String url = "https://swapi.co/api/people/1/?format=json";
 
@@ -81,7 +87,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             public void onClick(View v) {
                 finish();
                 startActivity(getIntent());
+            }
+        });
 
+        btnSearch.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String newUrl = url[0];
+                //newUrl.substring(newUrl.length() -12, newUrl.length());
+                String searchText = etSearch.getText().toString();
+                String var = "?search=" + searchText + "&format=json";
+                newUrl.replace("?format=json",searchText);
+                SharedPreferences.Editor searchUrl = sharedPreferences.edit();
+                searchUrl.putString("searchURL", newUrl);
+                searchUrl.commit();
+                finish();
+                startActivity(getIntent());
             }
         });
 
@@ -94,24 +115,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                     @Override
                     public void onResponse(JSONObject response) {
                         //mTextView.setText("Response: " + response.toString());
-                        if(response.has("name")) {
-                            if (response.has("height")) {
-                                peopleItems = new ArrayList<peopleItem>(50);
-                                JSONArray jsArr = null;
-                                try {
-                                    jsArr = response.getJSONArray("results");
-
-                                    if (jsArr.length() > 0) {
-                                        for (int i = 0; i < jsArr.length(); i++) {
-
-                                        }
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                        else if(response.has("results")) {
+                       if(response.has("results")) {
                             try {
                                 filmItems = new ArrayList<filmItem>(25);
                                 peopleItems = new ArrayList<peopleItem>(50);
