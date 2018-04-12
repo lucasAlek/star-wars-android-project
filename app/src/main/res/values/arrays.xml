@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="font_name">
+        <item>regular</item>
+        <item>star wars</item>
+        <item>crazy</item>
+    </string-array>
+    <string-array name="font_values">
+        <item>serif</item>
+    </string-array>
+</resources>
