@@ -53,6 +53,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ArrayList<peopleItem> peopleItems;
 
     Button btnSearch;
+    Button btnSettings;
 
 
     @Override
@@ -60,6 +61,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        btnSettings = findViewById(R.id.btnsettings);
         btnSearch = findViewById(R.id.btnSearch);
         btnGo = findViewById(R.id.btnGO);
         etSearch = findViewById(R.id.etSearch);
@@ -97,7 +99,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 //newUrl.substring(newUrl.length() -12, newUrl.length());
                 String searchText = etSearch.getText().toString();
                 String var = "?search=" + searchText + "&format=json";
-                newUrl.replace("?format=json",searchText);
+                newUrl = newUrl.replace("?format=json",var);
                 SharedPreferences.Editor searchUrl = sharedPreferences.edit();
                 searchUrl.putString("searchURL", newUrl);
                 searchUrl.commit();
@@ -106,6 +108,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
+        btnSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                openSettings();
+            }
+        });
+
+    }
+
+    private void openSettings() {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     private void vollyJsonRequest(String url) {

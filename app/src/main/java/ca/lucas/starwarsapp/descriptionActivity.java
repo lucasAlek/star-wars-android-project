@@ -58,6 +58,11 @@ public class descriptionActivity extends AppCompatActivity {
             setContentView(R.layout.film_layout);
         }
 
+        android.support.v7.app.ActionBar actionBar = getSupportActionBar();
+        if(actionBar != null){
+            actionBar.setDisplayHomeAsUpEnabled(true);
+        }
+
         lvFilmFeed = findViewById(R.id.lvFilms);
 
         tvTitle = findViewById(R.id.tvName);
